@@ -1,65 +1,121 @@
 import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Volume2, CheckCircle } from "lucide-react";
+import { getUserWithProfile } from "@/app/lib/auth/actions";
 
-export default function Home() {
+// Prevent caching of this page to avoid stale redirects
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  // Check if user is logged in and redirect to appropriate dashboard
+  const user = await getUserWithProfile();
+
+  if (user) {
+    // Redirect based on role
+    if (user.patient) {
+      redirect("/dashboard/patient");
+    } else if (user.psychologist) {
+      redirect("/dashboard/psychologist");
+    } else {
+      // User exists but no role assigned yet
+      redirect("/dashboard");
+    }
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white flex flex-col">
+      {/* Header */}
+      <header className="w-full px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-sm">L</span>
+          </div>
+          <span className="font-semibold text-gray-900">LexiREAD</span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <nav className="flex items-center gap-4">
+          <Link
+            href="/auth/signin"
+            className="text-gray-600 hover:text-gray-900 text-sm font-medium"
           >
+            Patient Login
+          </Link>
+          <Link href="/auth/signin">
+            <Button
+              variant="outline"
+              className="rounded-full border-sky-500 text-sky-500 hover:bg-sky-50"
+            >
+              Psychologist Login
+            </Button>
+          </Link>
+        </nav>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+        <div className="max-w-md w-full flex flex-col items-center">
+          {/* Hero Image */}
+          <div className="relative w-full aspect-[4/3] mb-8 rounded-2xl overflow-hidden bg-white shadow-lg border border-gray-100">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src="/hero-bird.png"
+              alt="Owl flying over an open book"
+              fill
+              className="object-cover"
+              priority
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
+
+          {/* Title with Audio Button */}
+          <div className="flex items-center gap-3 mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+              Unlock Your Potential
+            </h1>
+            <button
+              className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-500 hover:bg-sky-200 transition-colors"
+              aria-label="Listen to description"
+            >
+              <Volume2 className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Description */}
+          <p className="text-gray-500 text-center mb-8 leading-relaxed">
+            This is a quick and safe way to check your reading strengths. There
+            are no wrong answers here, just do your best.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="w-full space-y-4">
+            <Link href="/auth/signup" className="block">
+              <Button className="w-full bg-sky-500 hover:bg-sky-600 text-white rounded-full py-6 text-base font-medium">
+                Start Screening
+              </Button>
+            </Link>
+            <Link
+              href="/info/parents"
+              className="block text-center text-sky-500 hover:text-sky-600 font-medium"
+            >
+              Information for Parents
+            </Link>
+          </div>
+
+          {/* Trust Badge */}
+          <div className="mt-8 flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200 shadow-sm">
+            <CheckCircle className="h-4 w-4 text-sky-500" />
+            <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Clinically Verified
+            </span>
+          </div>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="w-full py-6 text-center">
+        <p className="text-sm text-gray-400">
+          © 2024 LexiREAD Healthcare. All rights reserved.
+        </p>
+      </footer>
     </div>
   );
 }

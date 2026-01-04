@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model drawing_module_test {
+  id                 BigInt            @id @default(autoincrement())
+  created_at         DateTime          @default(now()) @db.Timestamptz(6)
+  dominant_is_right  Boolean           @default(true)
+  shape_type         shape_type?
+  task_type          drawing_tast_type @default(Free_Drawing)
+  complexity         complexity_level  @default(easy)
+  is_segemented      Boolean           @default(false)
+  time_to_completion Int?
+  session_test_id    BigInt?           @map("session-test_id")
+  input_method       input_type        @default(finger)
+  session_test       session_test?     @relation(fields: [session_test_id], references: [id], onDelete: Cascade)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model patient {
+  id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  user_id                String                   @unique @db.Uuid
+  user                   user                     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  psychologist_passenger psychologist_passenger[]
+  session                session[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model psychologist {
+  id                     String                   @id(map: "Psychologist_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at             DateTime                 @default(now()) @db.Timestamptz(6)
+  user_id                String                   @unique(map: "Psychologist_user_id_key") @db.Uuid
+  user                   user                     @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "Psychologist_user_id_fkey")
+  psychologist_passenger psychologist_passenger[]
+  session                session[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model psychologist_passenger {
+  patient_id      String       @db.Uuid
+  psychologist_id String       @db.Uuid
+  created_at      DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime     @default(now()) @db.Timestamptz(6)
+  patient         patient      @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  psychologist    psychologist @relation(fields: [psychologist_id], references: [id], onDelete: Cascade)
+
+  @@id([patient_id, psychologist_id])
+  @@map("psychologist-passenger")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model session {
+  id              BigInt         @id @default(autoincrement())
+  created_at      DateTime       @default(now()) @db.Timestamptz(6)
+  patient_id      String         @db.Uuid
+  psychologist_id String         @db.Uuid
+  session_time    DateTime?      @db.Timestamptz(6)
+  patient         patient        @relation(fields: [patient_id], references: [id])
+  psychologist    psychologist   @relation(fields: [psychologist_id], references: [id])
+  session_test    session_test[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model session_test {
+  id                  BigInt                @id @default(autoincrement())
+  created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  test_id             BigInt?
+  session_id          BigInt?
+  drawing_module_test drawing_module_test[]
+  session             session?              @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  test                test?                 @relation(fields: [test_id], references: [id], onDelete: Cascade)
+
+  @@map("session-test")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model test {
+  id           BigInt         @id @default(autoincrement())
+  created_at   DateTime       @default(now()) @db.Timestamptz(6)
+  name         String?        @db.VarChar
+  type         test_type      @default(eye_tracking_module)
+  session_test session_test[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model user {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at   DateTime      @default(now()) @db.Timestamptz(6)
+  firstName    String        @db.VarChar
+  lastName     String        @db.VarChar
+  email        String        @unique @db.VarChar
+  patient      patient?
+  psychologist psychologist?
+}
+
+enum complexity_level {
+  easy
+  medium
+  hard
+}
+
+enum drawing_tast_type {
+  Copying
+  Tracing
+  Free_Drawing @map("Free Drawing")
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum input_type {
+  finger
+  stylus
+  mouse
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum shape_type {
+  square
+  triangle
+  rectangle
+  asterisk
+  parallel_lines          @map("parallel lines")
+  star__no_inner_lines_   @map("star (no inner lines)")
+  star__with_inner_lines_ @map("star (with inner lines)")
+  circle
+  oblong
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum test_type {
+  drawing_module      @map("drawing module")
+  eye_tracking_module @map("eye tracking module")
+}
