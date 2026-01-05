@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo } from 'react';
 import { set } from 'zod';
 
 export function DrawingComponent() {
@@ -279,3 +279,6 @@ export function DrawingComponent() {
     </div>
   );
 }
+
+// Memoize to prevent unnecessary re-renders
+export const Drawing = memo(DrawingComponent);

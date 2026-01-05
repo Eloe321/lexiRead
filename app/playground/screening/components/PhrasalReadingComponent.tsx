@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 
 export function PhrasalReadingComponent() {
   const [isDark, setIsDark] = useState(false);
@@ -126,3 +126,6 @@ export function PhrasalReadingComponent() {
     </div>
   );
 }
+
+// Memoize to prevent unnecessary re-renders
+export const PhrasalReading = memo(PhrasalReadingComponent);
