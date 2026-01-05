@@ -58,7 +58,7 @@ export default async function Home() {
           {/* Hero Image */}
           <div className="relative w-full aspect-[4/3] mb-8 rounded-2xl overflow-hidden bg-white shadow-lg border border-gray-100">
             <Image
-              src="/hero-bird.png"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuArvcjIjFsJg8KY-9BaO8pO7rdbx_q4pp2fC_CqL8E2_LwkkAytiLYlf8a7tRFFaqP3GMp68vuKEUc-uakuiAyI6FDOcSYBB6MYe5rAjIL1BFOT26yVt0TUnJ8er4Qt5jDPPgqqkMYOxc46tBP9DIJC3zuK-N3roHJ4cfzfzuzEnou-U0ZunxavpIH67et6lCGgI6jDeQ2ofuyW_oTW6LKLE2wZy_B4DyF6uuC9QO_rom-E9r481z96AgMtKTl8WxzNnv-7r8pg5kI"
               alt="Owl flying over an open book"
               fill
               className="object-cover"
