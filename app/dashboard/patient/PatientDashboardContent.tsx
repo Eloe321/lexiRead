@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Settings, HelpCircle, LogOut, Camera, Mic } from "lucide-react";
+import { redirect } from "next/navigation";
 
 interface User {
   firstName: string;
@@ -76,17 +77,32 @@ export function PatientDashboardContent({
       {/* Dashboard Content */}
       <div className="flex-1 p-6">
         {/* Date & Greeting */}
-        <div className="mb-6">
-          <p className="text-sm text-gray-500 mb-1">
-            {dayName}, {monthDay}
-          </p>
-          <h1 className="text-3xl font-bold text-gray-900">
-            {greeting}, {user.firstName}! 👋
-          </h1>
-          <p className="text-gray-500 mt-2">
-            You&apos;re all set for today&apos;s session. Check your equipment
-            below and jump right in.
-          </p>
+        <div className="mb-6 flex items-start justify-between">
+          <div className="flex-1">
+            <p className="text-sm text-gray-500 mb-1">
+              {dayName}, {monthDay}
+            </p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {greeting}, {user.firstName}! 👋
+            </h1>
+            <p className="text-gray-500 mt-2">
+              You&apos;re all set for today&apos;s session. Check your equipment
+              below and jump right in.
+            </p>
+          </div>
+          
+          {/* Screening Button */}
+          <button
+            onClick={() => {
+              redirect("/playground/introduction");
+            }}
+            className="ml-6 mt-6 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
+          >
+            Screening Playground
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
         </div>
 
         {/* Equipment Status */}
